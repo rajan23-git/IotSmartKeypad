@@ -60,8 +60,18 @@ def passcodeFromFrontend():
 
 
 
+@app.route('/<doorbell_distance>',methods = ["GET","POST"])
+def receiveMotion(doorbell_distance):
+    if(request.method == "POST"):
+        global detected_motion_distance
+        global detected_motion_timestamp
 
+        detected_motion_distance = doorbell_distance
+        detected_motion_timestamp = datetime.now(oregon_timezone).strftime("%d/%m/%Y %H:%M:%S")
+        print("detetced motion distance",detected_motion_distance)
+        print("detected motion timestamp",detected_motion_timestamp);
 
+    return "hello world"
 
 
 @app.route('/FetchConfiguredPasscode')
@@ -73,7 +83,6 @@ def fetchConfiguredPasscode():
 
 @app.route('/<entered_passcode>/<correct_boolean>',methods = ["GET","POST"] )
 def receiveLoginAttempt(entered_passcode,correct_boolean):
-    return_value = "no"
     if(request.method == "POST"):
         print(str(entered_passcode)+","+(correct_boolean))
         current_time = datetime.now(oregon_timezone).strftime("%d/%m/%Y %H:%M:%S")
@@ -81,8 +90,7 @@ def receiveLoginAttempt(entered_passcode,correct_boolean):
         database.session.add(login_table_entry)
         database.session.commit()
 
-    else:
-        return "hello world"
+    return  "hello world"
 
 
 @app.route('/LoginAttempts',methods = ["GET","POST"])
@@ -93,6 +101,7 @@ def loginAttempts():
 
 @app.route('/ConfigurePasscode',methods = ["GET","POST"])
 def configurePasscode():
+
     if(request.method == "GET"):
         return render_template('ConfigurePasscode.html')
     if(request.method == "POST"):
@@ -102,7 +111,7 @@ def configurePasscode():
         database.session.add(passcode_table_entry)
         database.session.commit()
         return render_template('ConfigurePasscode.html')
-
+    return render_template('ConfigurePasscode.html')
 
 
 
