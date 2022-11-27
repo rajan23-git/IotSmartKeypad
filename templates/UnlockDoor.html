@@ -1,0 +1,23 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Here You Can Lock and Unlock the Door</h1>
+
+
+<form action = '/UnlockDoor' method = "Post">
+
+<p>Select Whether You Want to Lock or Unlock Door</p>
+<select id="UnlockDoor" name = "UnlockDoorSelector">
+  <option value="Lock">Lock</option>
+  <option value="Unlock">Unlock</option>
+</select>
+<input type="submit"  value="Submit">
+
+</form>
+
+<p>Current Status = {{unlocked_status}}</p>
+
+</body>
+</html>

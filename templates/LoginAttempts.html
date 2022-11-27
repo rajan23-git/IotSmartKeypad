@@ -12,19 +12,23 @@
 
                  <tr>
                 <th>Passcode Attempted</th>
+                <th>Correct_Boolean</th>
                 <th>Timestamp</th>
-                <th>Correct?</th>
-                </tr>
 
+                </tr>
+                {% for login_attempt in login_attempt_array %}
                 <tr>
-                <th><h4>filler</h4></th>
-                <th><h4>filler</h4></th>
-                <th><h4>filler</h4></th>
+                <th><h4>{{login_attempt.passcode_entered}}</h4></th>
+                <th><h4>{{login_attempt.correct_boolean}}</h4></th>
+                <th><h4>{{login_attempt.timestamp}}</h4></th>
                 </tr>
-
-
+                {% endfor %}
             </table>
+            <br>
 
+            <h3> Motion Detection at Doorbell</h3>
+            <p>Motion Distance = {{motion_distance}}</p>
+            <p> Motion Timestamp = {{motion_timestamp}}</p>
 
 
    </body>

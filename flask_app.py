@@ -10,6 +10,10 @@ oregon_timezone = timezone('US/Pacific')
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
+unlock_boolean = "Lock"
+detected_motion_distance = "not calculated yet"
+detected_motion_timestamp = "not calculated yet"
+
 SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
     username="pranavrajan568",
     password="SQLPassword143",
@@ -35,28 +39,23 @@ class LoginAttemptTable(database.Model):
     correct_boolean = database.Column(database.String(4096))
     timestamp = database.Column(database.String(4096))
 
-
-def getConfiguredPasscode():
-    all_entries = database.session.query(PasscodeTable).all()
-    num_entries = len(all_entries)
-    latest_passcode = all_entries[num_entries - 1]
-    return latest_passcode.passcode_configured
-
+def getRecentLoginAttempts():
+    login_attempts = database.session.query(LoginAttemptTable).all()
+    table_size = len(login_attempts)
+    recent_attempts = login_attempts[(table_size - 5) : table_size]
+    return recent_attempts
 
 
+@app.route('/FetchUnlockedStatus')
+def fetchUnlockedStatus():
+    return unlock_boolean
 
-
-@app.route('/PasscodeFromFrontend',methods = ["GET","POST"])
-def passcodeFromFrontend():
+@app.route('/UnlockDoor',methods = ["GET","POST"])
+def unlockDoor():
     if(request.method == "POST"):
-        passcode_data = request.get_json()
-        passcode_value = passcode_data["passcode_value"]
-        boolean_value = passcode_data["boolean_value"]
-        current_time = datetime.now(oregon_timezone).strftime("%d/%m/%Y %H:%M:%S")
-
-        login_table_entry = LoginAttemptTable(passcode_entered = passcode_value, correct_boolean = boolean_value , timestamp = current_time)
-        database.session.add(login_table_entry)
-        database.session.commit()
+        global unlock_boolean
+        unlock_boolean = str(request.form["UnlockDoorSelector"])
+    return render_template('UnlockDoor.html',unlocked_status = unlock_boolean)
 
 
 
@@ -97,21 +96,21 @@ def receiveLoginAttempt(entered_passcode,correct_boolean):
 def loginAttempts():
 
     print("hello world")
-    return render_template('LoginAttempts.html')
+    print(getRecentLoginAttempts())
+    return render_template('LoginAttempts.html',login_attempt_array = getRecentLoginAttempts(), motion_distance = detected_motion_distance , motion_timestamp = detected_motion_timestamp )
 
 @app.route('/ConfigurePasscode',methods = ["GET","POST"])
 def configurePasscode():
-
-    if(request.method == "GET"):
-        return render_template('ConfigurePasscode.html')
+    passcode_string = "passcode not configured yet"
     if(request.method == "POST"):
         current_time = datetime.now(oregon_timezone).strftime("%d/%m/%Y %H:%M:%S")
         passcode_string = str(request.form['PasscodeTextArea']).strip()
         passcode_table_entry = PasscodeTable(passcode_configured = passcode_string,timestamp = str(current_time))
         database.session.add(passcode_table_entry)
         database.session.commit()
-        return render_template('ConfigurePasscode.html')
-    return render_template('ConfigurePasscode.html')
+
+    return render_template('ConfigurePasscode.html', current_configured = passcode_string)
+
 
 
 
