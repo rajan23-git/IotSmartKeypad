@@ -70,7 +70,7 @@ def receiveMotion(doorbell_distance):
         print("detetced motion distance",detected_motion_distance)
         print("detected motion timestamp",detected_motion_timestamp);
 
-    return "hello world"
+    return "default return value"
 
 
 @app.route('/FetchConfiguredPasscode')
@@ -89,13 +89,13 @@ def receiveLoginAttempt(entered_passcode,correct_boolean):
         database.session.add(login_table_entry)
         database.session.commit()
 
-    return  "hello world"
+    return  "default return value"
 
 
 @app.route('/LoginAttempts',methods = ["GET","POST"])
 def loginAttempts():
 
-    print("hello world")
+    print("default print statement")
     print(getRecentLoginAttempts())
     return render_template('LoginAttempts.html',login_attempt_array = getRecentLoginAttempts(), motion_distance = detected_motion_distance , motion_timestamp = detected_motion_timestamp )
 
