@@ -1,5 +1,5 @@
 
-# A very simple Flask Hello World app for you to get started with...
+# IOT Smart Keypad Project by Pranav Rajan
 
 from flask import Flask,redirect, url_for, render_template,request
 from flask_sqlalchemy import SQLAlchemy
@@ -120,6 +120,7 @@ def loginAttempts():
 
 #this route contains a form, where the administrator can enter the configured passcode, that will be used in the IOT smart keypad
 #this form makes a POST request to this route, and adds the configured passcode to the PasscodeTable, in the SQL database
+#current configured passcode is rendered on webpage
 @app.route('/ConfigurePasscode',methods = ["GET","POST"])
 def configurePasscode():
     passcode_string = "passcode not configured yet"
